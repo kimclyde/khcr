@@ -15,7 +15,7 @@ A Streamlit web application for recognizing handwritten Khmer digits (០-៩) a
 1. Clone the repository:
 ```bash
 git clone https://github.com/kimclyde/khcr.git
-cd khdr
+cd khcr
 ```
 
 2. Install required dependencies:
