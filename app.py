@@ -279,7 +279,7 @@ if app_mode == "🔢 Khmer Digit Recognition":
         drawing_mode="freedraw",
         key="digit_canvas",
     )
-    if st.button("Recognize Character"):
+    if st.button("Recognize"):
     # Load digit model
         @st.cache_resource
         def load_digit_model():
@@ -331,13 +331,16 @@ if app_mode == "🔢 Khmer Digit Recognition":
                     icon = "✅" if correctness == "correct" else "❌"
                     st.markdown(f"""
                     <div class="prediction-box {color_class}">
-                        <h3>{icon} Writing Direction</h3>
+                        <h3>{icon} Writing Quality</h3>
                         <p style='font-size: 1.5rem;'>{correctness.title()}</p>
                     </div>
                     """, unsafe_allow_html=True)
 
 elif app_mode == "📝 Khmer Character Recognition":
     st.title("📝 Khmer Character Recognition")
+    
+    target_char = st.selectbox("Select the character you will draw:", DISPLAY_CHARACTERS)
+    st.markdown(f"### 🎯 Target Character: **{target_char}**")
     
     canvas_result = st_canvas(
         fill_color="rgba(255, 255, 255, 0)",
@@ -350,7 +353,7 @@ elif app_mode == "📝 Khmer Character Recognition":
         key="char_canvas",
     )
 
-    if st.button("Recognize Character"):
+    if st.button("Recognize"):
         if canvas_result.json_data and canvas_result.json_data["objects"]:
             @st.cache_resource
             def load_char_model():
@@ -393,12 +396,40 @@ elif app_mode == "📝 Khmer Character Recognition":
                         _, predicted_index = torch.max(output.data, 1)
                         predicted_char = KHMER_CHARACTER_MAP[predicted_index.item()]
                     
-                    st.markdown(f"""
-                    <div class="prediction-box digit-result">
-                        <h3> 🆎 Predicted Character</h3>
-                        <div style='font-size: 4rem;'>{predicted_char}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown("### 📊 Recognition Result")
+                    
+                    col1, col2, col3 = st.columns([1, 1, 1])
+                    
+                    with col1:
+                        st.markdown(f"**You drew:**")
+                        st.markdown(f"<div style='font-size: 3rem; text-align: center;'>{target_char}</div>", unsafe_allow_html=True)
+                    
+                    with col2:
+                        st.markdown(f"**Result:**")
+                        if predicted_char == target_char:
+                            st.markdown(f"<div style='font-size: 3rem; text-align: center; color: green;'>✅</div>", unsafe_allow_html=True)
+                        else:
+                            st.markdown(f"<div style='font-size: 3rem; text-align: center; color: red;'>❌</div>", unsafe_allow_html=True)
+                    
+                    with col3:
+                        st.markdown(f"**Model predicted:**")
+                        st.markdown(f"<div style='font-size: 3rem; text-align: center;'>{predicted_char}</div>", unsafe_allow_html=True)
+                    
+                    if predicted_char == target_char:
+                        st.markdown(f"""
+                        <div class="prediction-box correct">
+                            <h3>🎉 Correct! 🎉</h3>
+                            <p>Great job! The model correctly recognized your drawing of <strong>{target_char}</strong></p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"""
+                        <div class="prediction-box incorrect">
+                            <h3>❌ Incorrect</h3>
+                            <p>You intended to draw <strong>{target_char}</strong> but the model predicted <strong>{predicted_char}</strong></p>
+                            <p>💡 Try drawing the character more clearly or check the stroke order</p>
+                        </div>
+                        """, unsafe_allow_html=True)
                     
                     
                 else:
