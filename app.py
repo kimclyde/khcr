@@ -395,7 +395,7 @@ elif app_mode == "📝 Khmer Character Recognition":
                     
                     st.markdown(f"""
                     <div class="prediction-box digit-result">
-                        <h3>🔢 Predicted Digit</h3>
+                        <h3> 🆎 Predicted Character</h3>
                         <div style='font-size: 4rem;'>{predicted_char}</div>
                     </div>
                     """, unsafe_allow_html=True)
